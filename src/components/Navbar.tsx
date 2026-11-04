@@ -14,8 +14,16 @@ export default function Navbar({ activeTab, setActiveTab, userRole, setUserRole 
   const navItems = [
     { id: 'search', label: 'Search', icon: Search },
     { id: 'papers', label: 'Papers', icon: BookOpen },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    ...(userRole === 'ADMIN' ? [{ id: 'analytics', label: 'Analytics', icon: BarChart3 }] : []),
   ];
+
+  const handleToggleRole = () => {
+    const nextRole = userRole === 'ADMIN' ? 'STUDENT' : 'ADMIN';
+    setUserRole(nextRole);
+    if (nextRole === 'STUDENT' && activeTab === 'analytics') {
+      setActiveTab('search');
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
@@ -60,7 +68,7 @@ export default function Navbar({ activeTab, setActiveTab, userRole, setUserRole 
         {/* Role Switcher Pill */}
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setUserRole(userRole === 'ADMIN' ? 'STUDENT' : 'ADMIN')}
+            onClick={handleToggleRole}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all shadow-sm ${
               userRole === 'ADMIN'
                 ? 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, BookOpen, Search, Layers, ShieldAlert } from 'lucide-react';
 
-export default function AnalyticsDashboard() {
+export default function AnalyticsDashboard({ userRole = 'ADMIN' }: { userRole?: 'ADMIN' | 'STUDENT' }) {
   const [data, setData] = useState<{
     paperAnalytics: any[];
     recentSearches: any[];
@@ -12,15 +12,22 @@ export default function AnalyticsDashboard() {
   } | null>(null);
   const [activeSubTab, setActiveSubTab] = useState<'papers' | 'queries' | 'departments' | 'audit'>('papers');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/analytics');
+      setError(null);
+      const res = await fetch('/api/analytics', {
+        headers: {
+          'x-user-role': userRole,
+        },
+      });
       const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to fetch analytics');
       if (json.success) setData(json);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -49,6 +56,13 @@ export default function AnalyticsDashboard() {
           <span>Refresh Data</span>
         </button>
       </div>
+
+      {error && (
+        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-xs font-semibold flex items-center gap-2">
+          <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Modern KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">

@@ -1,8 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 
-export async function GET() {
+export const dynamic = 'force-dynamic';
+
+export async function GET(req: NextRequest) {
   try {
+    const roleHeader = req?.headers?.get('x-user-role');
+    if (roleHeader === 'STUDENT') {
+      return NextResponse.json(
+        { error: 'Forbidden: Analytics and audit logs are restricted to Administrators.' },
+        { status: 403 }
+      );
+    }
+
     const [paperAnalytics, recentSearches, categoryInsights, auditLogs] = await Promise.all([
       query(`SELECT * FROM view_paper_analytics LIMIT 15`),
       query(`SELECT * FROM view_recent_search_activity LIMIT 15`),

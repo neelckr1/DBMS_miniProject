@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Calendar, User, Search, Check, AlertCircle, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Calendar, User, Search, Check, AlertCircle, Sparkles, Shield, GraduationCap } from 'lucide-react';
 
 interface Paper {
   paper_id: number;
@@ -53,6 +53,10 @@ export default function PaperRepository({ userRole }: { userRole: 'ADMIN' | 'STU
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (userRole !== 'ADMIN') {
+      setMessage({ type: 'error', text: 'Access Denied: Only administrators can upload research papers.' });
+      return;
+    }
     if (!title.trim() || !abstract.trim()) return;
     setSubmitting(true);
     setMessage(null);
@@ -88,6 +92,10 @@ export default function PaperRepository({ userRole }: { userRole: 'ADMIN' | 'STU
   };
 
   const handleDelete = async (id: number, paperTitle: string) => {
+    if (userRole !== 'ADMIN') {
+      setMessage({ type: 'error', text: 'Access Denied: Only administrators can delete papers.' });
+      return;
+    }
     if (!confirm(`Delete "${paperTitle}"? This will test foreign key CASCADE and trigger the database audit log.`)) return;
 
     try {
@@ -125,14 +133,38 @@ export default function PaperRepository({ userRole }: { userRole: 'ADMIN' | 'STU
           </p>
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition-all shadow-sm shadow-blue-500/20 w-fit"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Upload Paper</span>
-        </button>
+        {userRole === 'ADMIN' ? (
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition-all shadow-sm shadow-blue-500/20 w-fit"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Upload Paper</span>
+          </button>
+        ) : (
+          <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 text-slate-500 text-xs font-medium border border-slate-200">
+            <Shield className="w-3.5 h-3.5 text-slate-400" />
+            <span>Upload: Admin Only</span>
+          </div>
+        )}
       </div>
+
+      {/* Role Context Banner */}
+      {userRole === 'STUDENT' ? (
+        <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-center gap-2">
+          <GraduationCap className="w-4 h-4 text-blue-600 shrink-0" />
+          <span>
+            <strong>Student View:</strong> You have read-only access to browse research papers. Switch to <strong>Admin</strong> in the top-right header to upload or delete records.
+          </span>
+        </div>
+      ) : (
+        <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-center gap-2">
+          <Shield className="w-4 h-4 text-amber-600 shrink-0" />
+          <span>
+            <strong>Admin View:</strong> Full management privileges enabled. You can upload new papers with automated vector embeddings and delete records.
+          </span>
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -223,13 +255,15 @@ export default function PaperRepository({ userRole }: { userRole: 'ADMIN' | 'STU
                   </div>
                 </div>
 
-                <button
-                  onClick={() => handleDelete(paper.paper_id, paper.title)}
-                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                  title="Delete paper (tests trigger audit)"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                {userRole === 'ADMIN' && (
+                  <button
+                    onClick={() => handleDelete(paper.paper_id, paper.title)}
+                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                    title="Delete paper (triggers database audit log)"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
 
               <p className="text-xs text-slate-600 leading-relaxed pt-2.5 border-t border-slate-100">

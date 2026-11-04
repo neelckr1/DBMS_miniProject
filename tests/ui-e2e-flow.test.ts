@@ -81,7 +81,16 @@ test('UI End-to-End User Journey Tests', async (t) => {
   });
 
   await t.test('4. Institutional Analytics Flow: UI queries PostgreSQL materialized views', async () => {
-    const res = await getAnalyticsHandler();
+    // Verify Student access is rejected with 403 Forbidden
+    const studentReq = new NextRequest(new URL('http://localhost:3000/api/analytics'), {
+      headers: { 'x-user-role': 'STUDENT' },
+    });
+    const forbiddenRes = await getAnalyticsHandler(studentReq);
+    assert.strictEqual(forbiddenRes.status, 403, 'Student request to /api/analytics must return 403 Forbidden');
+
+    // Verify Admin / default access succeeds
+    const adminReq = createMockRequest('http://localhost:3000/api/analytics', 'GET');
+    const res = await getAnalyticsHandler(adminReq);
     assert.strictEqual(res.status, 200);
 
     const data = await res.json();
@@ -103,7 +112,7 @@ test('UI End-to-End User Journey Tests', async (t) => {
     assert.strictEqual(data.success, true);
 
     // Verify audit log has recorded DELETE action
-    const analyticsRes = await getAnalyticsHandler();
+    const analyticsRes = await getAnalyticsHandler(createMockRequest('http://localhost:3000/api/analytics', 'GET'));
     const analyticsData = await analyticsRes.json();
     const deleteAudit = analyticsData.auditLogs.find(
       (log: any) => log.paper_id === createdTestPaperId && log.action_type === 'DELETE'

@@ -20,6 +20,7 @@ import React from 'react';
 import { render, fireEvent, cleanup } from '@testing-library/react';
 import Navbar from '../src/components/Navbar';
 import SearchSection from '../src/components/SearchSection';
+import PaperRepository from '../src/components/PaperRepository';
 
 test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
   await t.test('Navbar: Renders branding, navigation tabs, and role toggle', () => {
@@ -27,7 +28,7 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
     let currentTab = 'search';
     let currentRole: 'ADMIN' | 'STUDENT' = 'STUDENT';
 
-    const { getByText, rerender } = render(
+    const { getByText, rerender, queryByText } = render(
       React.createElement(Navbar, {
         activeTab: currentTab,
         setActiveTab: (tab: string) => { currentTab = tab; },
@@ -40,10 +41,10 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
     assert.ok(getByText('Campus Research Repository'), 'Header title must be rendered');
     assert.ok(getByText('Semantic Search System'), 'Badge must be rendered');
 
-    // Verify Navigation Links
+    // In STUDENT role:
     assert.ok(getByText('Search'), 'Search tab link must exist');
     assert.ok(getByText('Papers'), 'Papers tab link must exist');
-    assert.ok(getByText('Analytics'), 'Analytics tab link must exist');
+    assert.strictEqual(queryByText('Analytics'), null, 'Analytics tab must NOT be visible to Student');
 
     // Verify Role Toggle displays Student
     const roleButton = getByText('Student');
@@ -63,11 +64,12 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
       })
     );
     assert.ok(getByText('Admin'), 'Role button must now display Admin');
+    assert.ok(getByText('Analytics'), 'Analytics tab MUST be visible to Admin');
 
-    // Click Papers Tab
-    const papersTabButton = getByText('Papers');
-    fireEvent.click(papersTabButton);
-    assert.strictEqual(currentTab, 'papers', 'Clicking Papers must change activeTab to papers');
+    // Click Analytics Tab
+    const analyticsTabButton = getByText('Analytics');
+    fireEvent.click(analyticsTabButton);
+    assert.strictEqual(currentTab, 'analytics', 'Clicking Analytics must change activeTab to analytics');
   });
 
   await t.test('SearchSection: Renders search input, options toggle, and suggestion pills', async () => {
@@ -88,5 +90,28 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
 
     // Verify similarity threshold slider appears
     assert.ok(getByText('Minimum Match:'), 'Threshold label must appear when filters toggled');
+  });
+
+  await t.test('PaperRepository: Enforces role restrictions between Student and Admin', async () => {
+    cleanup();
+    (global as any).fetch = async () => ({
+      ok: true,
+      json: async () => ({
+        success: true,
+        papers: [],
+      }),
+    });
+
+    const { getByText, queryByText, rerender } = render(
+      React.createElement(PaperRepository, { userRole: 'STUDENT' })
+    );
+
+    // Verify Student view
+    assert.ok(getByText('Upload: Admin Only'), 'Student mode must show Admin Only upload restriction');
+    assert.strictEqual(queryByText('Upload Paper'), null, 'Student mode must NOT have active Upload Paper button');
+
+    // Rerender as ADMIN
+    rerender(React.createElement(PaperRepository, { userRole: 'ADMIN' }));
+    assert.ok(getByText('Upload Paper'), 'Admin mode MUST have active Upload Paper button');
   });
 });
