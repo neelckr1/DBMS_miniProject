@@ -10,7 +10,7 @@ import { Database, GitBranch, Layers, ShieldCheck } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'search' | 'papers' | 'analytics' | 'sql'>('search');
-  const [userRole, setUserRole] = useState<'ADMIN' | 'RESEARCHER'>('RESEARCHER');
+  const [userRole, setUserRole] = useState<'ADMIN' | 'STUDENT'>('STUDENT');
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -33,8 +33,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Database className="h-4 w-4 text-blue-600" />
-            <span className="font-semibold text-slate-800">ScholarVector</span>
-            <span>— Level 3 DBMS Mini-Project (PostgreSQL 17 + pgvector + Next.js)</span>
+            <span className="font-semibold text-slate-800">Campus Research Repository</span>
+            <span>— Semantic Search System (PostgreSQL 17 + pgvector + Next.js)</span>
           </div>
 
           <div className="flex items-center gap-4">

@@ -1,9 +1,15 @@
-# ScholarVector: Research Paper Semantic Search & Retrieval System
+# Campus Research Repository and Semantic Search System
 
 > **DBMS Experiential Learning – Level 3 Mini-Project**  
 > **Course:** Database Management Systems (Semester 5)  
 > **Paradigm:** SQL (PostgreSQL 17) + Vector Database (`pgvector`)  
 > **Full-Stack Stack:** Next.js (App Router), TypeScript, Tailwind CSS
+
+---
+
+## Abstract
+
+> This Next.js-based web application manages role-based access for users such as Admin and Student to handle academic research papers. It implements a multi-paradigm database architecture combining a mandatory PostgreSQL SQL database for structured relational data with a vector database for vector embeddings and semantic search. The system executes database operations through DDL and DML statements while demonstrating advanced database features including transactions, views, stored procedures, and vector similarity search. Data integrity and security are enforced via database-level input validation, environment variables for sensitive configurations, and secure credential handling. Source code, implementation tracking, and documentation are maintained using Git and GitHub.
 
 ---
 
@@ -28,7 +34,7 @@ Traditional academic search systems rely almost exclusively on keyword matching 
 ```
 
 ### Core Entities & Relationships
-- **`users`**: System actors with Role-Based Access Control (`ADMIN` vs. `RESEARCHER`).
+- **`users`**: System actors with Role-Based Access Control (`ADMIN` vs. `STUDENT`).
 - **`research_paper`**: Metadata including Title, Abstract, Authors, Category, Publication Date.
 - **`vector_embedding`**: 1:1 relationship with `research_paper` storing 384-dimensional vectors.
 - **`search_query`**: Query logs executed by users.

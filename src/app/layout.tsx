@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ScholarVector - DBMS Level 3 Mini-Project',
-  description: 'AI-Powered Research Paper Semantic Search & Retrieval System using PostgreSQL and pgvector',
+  title: 'Campus Research Repository and Semantic Search System',
+  description: 'Next.js application managing role-based access for Admin and Student to handle academic research papers with PostgreSQL and pgvector semantic retrieval.',
 };
 
 export default function RootLayout({

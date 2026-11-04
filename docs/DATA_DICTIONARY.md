@@ -1,13 +1,13 @@
 # Data Dictionary & Schema Specification
 
-**Project Title:** AI-Powered Research Paper Semantic Search & Retrieval System  
+**Project Title:** Campus Research Repository and Semantic Search System  
 **Database:** PostgreSQL 17 + `pgvector`  
 **Embedding Model:** `Xenova/all-MiniLM-L6-v2` (384-dimensional dense vectors)
 
 ---
 
 ## 1. Table: `users`
-Represents system actors with Role-Based Access Control (RBAC).
+Represents system actors with Role-Based Access Control (Admin / Student).
 
 | Column Name | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
@@ -15,7 +15,7 @@ Represents system actors with Role-Based Access Control (RBAC).
 | `email` | `VARCHAR(255)` | `UNIQUE, NOT NULL` | Login email address |
 | `password_hash` | `VARCHAR(255)` | `NOT NULL` | Hashed credential (bcrypt) |
 | `full_name` | `VARCHAR(150)` | `NOT NULL` | Display name of user |
-| `role` | `VARCHAR(50)` | `NOT NULL, CHECK (role IN ('ADMIN', 'RESEARCHER'))` | RBAC role |
+| `role` | `VARCHAR(50)` | `NOT NULL, CHECK (role IN ('ADMIN', 'STUDENT'))` | RBAC role (Admin or Student) |
 | `created_at` | `TIMESTAMPTZ` | `DEFAULT CURRENT_TIMESTAMP` | Account creation timestamp |
 | `updated_at` | `TIMESTAMPTZ` | `DEFAULT CURRENT_TIMESTAMP` | Last updated timestamp (via trigger) |
 

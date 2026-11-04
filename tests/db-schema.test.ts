@@ -54,7 +54,7 @@ test('PostgreSQL Relational Schema & Constraints Tests', async (t) => {
     );
   });
 
-  await t.test('CHECK constraint: role must be ADMIN or RESEARCHER', async () => {
+  await t.test('CHECK constraint: role must be ADMIN or STUDENT', async () => {
     await assert.rejects(
       async () => {
         await query(`
@@ -74,7 +74,7 @@ test('PostgreSQL Relational Schema & Constraints Tests', async (t) => {
       async () => {
         await query(`
           INSERT INTO users (email, password_hash, full_name, role)
-          VALUES ('admin@scholarvector.edu', 'hash', 'Duplicate Admin', 'ADMIN');
+          VALUES ('admin@campus.edu', 'hash', 'Duplicate Admin', 'ADMIN');
         `);
       },
       (err: any) => {

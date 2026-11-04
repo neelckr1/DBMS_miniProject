@@ -14,7 +14,7 @@ interface SearchResult {
   rank_order: number;
 }
 
-export default function SearchSection({ userRole }: { userRole: 'ADMIN' | 'RESEARCHER' }) {
+export default function SearchSection({ userRole }: { userRole: 'ADMIN' | 'STUDENT' }) {
   const [queryText, setQueryText] = useState('');
   const [threshold, setThreshold] = useState(0.2);
   const [limit, setLimit] = useState(5);
@@ -76,10 +76,10 @@ export default function SearchSection({ userRole }: { userRole: 'ADMIN' | 'RESEA
             Vector Cosine Similarity (&lt;=&gt;) & HNSW Indexing
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
-            Semantic Research Paper Retrieval
+            Campus Semantic Research Search
           </h1>
           <p className="text-sm sm:text-base text-slate-300 mb-6">
-            Type natural language concepts, hypotheses, or paper descriptions. The system generates 384-dimensional dense vectors and finds nearest matches in PostgreSQL via stored procedures.
+            Search academic papers, theses, and capstone projects using natural language. The system converts your query into 384-dimensional dense vectors and performs vector similarity search in PostgreSQL.
           </p>
 
           {/* Search Input Box */}

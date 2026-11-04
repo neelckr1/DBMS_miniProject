@@ -1,5 +1,5 @@
 -- ==============================================================================
--- Schema: Research Paper Semantic Search & Retrieval System
+-- Schema: Campus Research Repository and Semantic Search System
 -- Course: DBMS Level 3 Mini-Project
 -- Paradigms: SQL (PostgreSQL) + Vector Database (pgvector)
 -- ==============================================================================
@@ -17,14 +17,14 @@ DROP TABLE IF EXISTS users CASCADE;
 
 -- ==============================================================================
 -- TABLE 1: users
--- Represents system actors with Role-Based Access Control (Admin / Researcher)
+-- Represents system actors with Role-Based Access Control (Admin / Student)
 -- ==============================================================================
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(150) NOT NULL,
-    role VARCHAR(50) NOT NULL DEFAULT 'RESEARCHER' CHECK (role IN ('ADMIN', 'RESEARCHER')),
+    role VARCHAR(50) NOT NULL DEFAULT 'STUDENT' CHECK (role IN ('ADMIN', 'STUDENT')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

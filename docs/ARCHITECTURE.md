@@ -1,8 +1,16 @@
 # System Architecture & Technical Specifications
 
+**Project Title:** Campus Research Repository and Semantic Search System  
+**Course:** DBMS Experiential Learning – Level 3 Mini-Project
+
+### Abstract
+> This Next.js-based web application manages role-based access for users such as Admin and Student to handle academic research papers. It implements a multi-paradigm database architecture combining a mandatory PostgreSQL SQL database for structured relational data with a vector database for vector embeddings and semantic search. The system executes database operations through DDL and DML statements while demonstrating advanced database features including transactions, views, stored procedures, and vector similarity search. Data integrity and security are enforced via database-level input validation, environment variables for sensitive configurations, and secure credential handling. Source code, implementation tracking, and documentation are maintained using Git and GitHub.
+
+---
+
 ## 1. Architectural Overview
 
-ScholarVector is built using a unified SQL + Vector database paradigm powered by PostgreSQL 17 and `pgvector`, paired with a Next.js (App Router) full-stack web layer.
+The Campus Research Repository is built using a unified SQL + Vector database paradigm powered by PostgreSQL 17 and `pgvector`, paired with a Next.js (App Router) full-stack web layer.
 
 ```mermaid
 flowchart TD

@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { BookOpen, Search, BarChart3, Database, ShieldCheck, UserCheck } from 'lucide-react';
+import { BookOpen, Search, BarChart3, Database, ShieldCheck, GraduationCap } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  userRole: 'ADMIN' | 'RESEARCHER';
-  setUserRole: (role: 'ADMIN' | 'RESEARCHER') => void;
+  userRole: 'ADMIN' | 'STUDENT';
+  setUserRole: (role: 'ADMIN' | 'STUDENT') => void;
 }
 
 export default function Navbar({ activeTab, setActiveTab, userRole, setUserRole }: NavbarProps) {
@@ -22,12 +22,12 @@ export default function Navbar({ activeTab, setActiveTab, userRole, setUserRole 
             </div>
             <div>
               <span className="font-bold text-lg text-slate-900 tracking-tight flex items-center gap-2">
-                ScholarVector
+                Campus Research Repository
                 <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
-                  SQL + pgvector
+                  Semantic Search System
                 </span>
               </span>
-              <p className="text-xs text-slate-500 hidden sm:block">DBMS Level 3 Semantic Retrieval Platform</p>
+              <p className="text-xs text-slate-500 hidden sm:block">DBMS Level 3 Multi-Paradigm Platform (PostgreSQL + pgvector)</p>
             </div>
           </div>
 
@@ -54,7 +54,7 @@ export default function Navbar({ activeTab, setActiveTab, userRole, setUserRole 
               }`}
             >
               <BookOpen className="h-4 w-4" />
-              <span>Papers</span>
+              <span>Repository</span>
             </button>
 
             <button
@@ -82,17 +82,17 @@ export default function Navbar({ activeTab, setActiveTab, userRole, setUserRole 
             </button>
           </nav>
 
-          {/* Role Switcher (RBAC) */}
+          {/* Role Switcher (RBAC: Admin / Student) */}
           <div className="flex items-center gap-2 pl-3 border-l border-slate-200">
-            <span className="text-xs text-slate-500 hidden md:inline">Role:</span>
+            <span className="text-xs text-slate-500 hidden md:inline">Current Role:</span>
             <button
-              onClick={() => setUserRole(userRole === 'ADMIN' ? 'RESEARCHER' : 'ADMIN')}
+              onClick={() => setUserRole(userRole === 'ADMIN' ? 'STUDENT' : 'ADMIN')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm transition-all ${
                 userRole === 'ADMIN'
                   ? 'bg-amber-100 text-amber-800 border border-amber-300'
                   : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
               }`}
-              title="Click to toggle role"
+              title="Click to toggle between Admin and Student"
             >
               {userRole === 'ADMIN' ? (
                 <>
@@ -101,8 +101,8 @@ export default function Navbar({ activeTab, setActiveTab, userRole, setUserRole 
                 </>
               ) : (
                 <>
-                  <UserCheck className="h-3.5 w-3.5" />
-                  Researcher
+                  <GraduationCap className="h-3.5 w-3.5" />
+                  Student
                 </>
               )}
             </button>

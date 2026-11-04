@@ -16,7 +16,7 @@ interface Paper {
   has_vector: boolean;
 }
 
-export default function PaperRepository({ userRole }: { userRole: 'ADMIN' | 'RESEARCHER' }) {
+export default function PaperRepository({ userRole }: { userRole: 'ADMIN' | 'STUDENT' }) {
   const [papers, setPapers] = useState<Paper[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -124,9 +124,9 @@ export default function PaperRepository({ userRole }: { userRole: 'ADMIN' | 'RES
       {/* Top action header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Research Paper Repository</h2>
+          <h2 className="text-xl font-bold text-slate-900">Campus Research Repository</h2>
           <p className="text-sm text-slate-500">
-            Relational storage (`research_paper`) with 1:1 vector embeddings (`vector_embedding`).
+            Institutional storage for academic research papers (`research_paper`) with 1:1 vector embeddings (`vector_embedding`).
           </p>
         </div>
 
