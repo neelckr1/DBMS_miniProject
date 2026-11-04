@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, History, ShieldAlert, RefreshCw, FileText } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 
 export default function AnalyticsDashboard() {
   const [data, setData] = useState<{
@@ -10,6 +10,7 @@ export default function AnalyticsDashboard() {
     categoryInsights: any[];
     auditLogs: any[];
   } | null>(null);
+  const [activeSubTab, setActiveSubTab] = useState<'papers' | 'queries' | 'departments' | 'audit'>('papers');
   const [loading, setLoading] = useState(true);
 
   const fetchAnalytics = async () => {
@@ -17,9 +18,7 @@ export default function AnalyticsDashboard() {
       setLoading(true);
       const res = await fetch('/api/analytics');
       const json = await res.json();
-      if (json.success) {
-        setData(json);
-      }
+      if (json.success) setData(json);
     } catch (err) {
       console.error(err);
     } finally {
@@ -31,227 +30,218 @@ export default function AnalyticsDashboard() {
     fetchAnalytics();
   }, []);
 
-  if (loading && !data) {
-    return <div className="text-center py-12 text-slate-500">Loading DBMS analytical views...</div>;
-  }
-
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <div className="max-w-5xl mx-auto space-y-5">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 rounded-xl border border-gray-200">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-600" />
-            DBMS Analytics & Materialized Views
-          </h2>
-          <p className="text-sm text-slate-500">
-            Real-time querying over PostgreSQL Views: <code>view_paper_analytics</code>, <code>view_recent_search_activity</code>, and <code>view_category_insights</code>.
+          <h2 className="text-xl font-bold text-gray-900">Database Analytics & Views</h2>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Querying PostgreSQL views (<code>view_paper_analytics</code>, <code>view_recent_search_activity</code>, <code>view_category_insights</code>)
           </p>
         </div>
 
         <button
           onClick={fetchAnalytics}
-          className="flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors w-fit"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
-          Refresh Views
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <span>Refresh</span>
         </button>
       </div>
 
-      {/* KPI Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Papers Tracked</p>
-          <p className="text-2xl font-black text-slate-900 mt-1">{data?.paperAnalytics.length || 0}</p>
-          <p className="text-xs text-blue-600 mt-1">Indexed with HNSW</p>
+      {/* Summary KPI Badges */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-white p-3 rounded-lg border border-gray-200">
+          <p className="text-[11px] text-gray-500 font-medium">Total Papers</p>
+          <p className="text-xl font-bold text-gray-900 mt-0.5">{data?.paperAnalytics.length || 0}</p>
         </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Logged Search Queries</p>
-          <p className="text-2xl font-black text-slate-900 mt-1">{data?.recentSearches.length || 0}</p>
-          <p className="text-xs text-emerald-600 mt-1">ACID transactional logs</p>
+        <div className="bg-white p-3 rounded-lg border border-gray-200">
+          <p className="text-[11px] text-gray-500 font-medium">Queries Logged</p>
+          <p className="text-xl font-bold text-gray-900 mt-0.5">{data?.recentSearches.length || 0}</p>
         </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Domains / Categories</p>
-          <p className="text-2xl font-black text-slate-900 mt-1">{data?.categoryInsights.length || 0}</p>
-          <p className="text-xs text-purple-600 mt-1">GROUP BY aggregations</p>
+        <div className="bg-white p-3 rounded-lg border border-gray-200">
+          <p className="text-[11px] text-gray-500 font-medium">Departments</p>
+          <p className="text-xl font-bold text-gray-900 mt-0.5">{data?.categoryInsights.length || 0}</p>
         </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Trigger Audit Entries</p>
-          <p className="text-2xl font-black text-slate-900 mt-1">{data?.auditLogs.length || 0}</p>
-          <p className="text-xs text-amber-600 mt-1">Logged by DB trigger</p>
+        <div className="bg-white p-3 rounded-lg border border-gray-200">
+          <p className="text-[11px] text-gray-500 font-medium">Audit Trail Events</p>
+          <p className="text-xl font-bold text-gray-900 mt-0.5">{data?.auditLogs.length || 0}</p>
         </div>
       </div>
 
-      {/* View 1: view_paper_analytics */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-blue-600" />
-            <h3 className="font-bold text-slate-900 text-sm">
-              Paper Retrieval Analytics (View: <code>view_paper_analytics</code>)
-            </h3>
-          </div>
-          <span className="text-xs text-slate-500">GROUP BY + LEFT JOIN + Aggregate (AVG, MAX, COUNT)</span>
-        </div>
+      {/* View Switcher Tabs */}
+      <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
+        <button
+          onClick={() => setActiveSubTab('papers')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            activeSubTab === 'papers'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          Paper Retrieval Stats (View 1)
+        </button>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
-            <thead className="bg-slate-50 text-slate-700 font-semibold border-b">
-              <tr>
-                <th className="p-3">ID</th>
-                <th className="p-3">Paper Title</th>
-                <th className="p-3">Category</th>
-                <th className="p-3 text-center">Total Retrievals</th>
-                <th className="p-3 text-center">Unique Researchers</th>
-                <th className="p-3 text-right">Avg Similarity</th>
-                <th className="p-3 text-right">Max Similarity</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {data?.paperAnalytics.map((p) => (
-                <tr key={p.paper_id} className="hover:bg-slate-50">
-                  <td className="p-3 font-mono text-slate-400">#{p.paper_id}</td>
-                  <td className="p-3 font-medium text-slate-900 max-w-xs truncate">{p.title}</td>
-                  <td className="p-3">
-                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
-                      {p.category}
-                    </span>
-                  </td>
-                  <td className="p-3 text-center font-bold text-blue-600">{p.total_retrievals}</td>
-                  <td className="p-3 text-center">{p.unique_researchers_reached}</td>
-                  <td className="p-3 text-right font-mono">{Number(p.avg_similarity_score).toFixed(4)}</td>
-                  <td className="p-3 text-right font-mono font-bold text-emerald-600">
-                    {Number(p.max_similarity_score).toFixed(4)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <button
+          onClick={() => setActiveSubTab('queries')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            activeSubTab === 'queries'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          Search Query History (View 2)
+        </button>
+
+        <button
+          onClick={() => setActiveSubTab('departments')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            activeSubTab === 'departments'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          Department Aggregates (View 3)
+        </button>
+
+        <button
+          onClick={() => setActiveSubTab('audit')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            activeSubTab === 'audit'
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          Trigger Audit Log
+        </button>
       </div>
 
-      {/* View 2: view_recent_search_activity */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <History className="h-4 w-4 text-indigo-600" />
-            <h3 className="font-bold text-slate-900 text-sm">
-              Recent Search Activity (View: <code>view_recent_search_activity</code>)
-            </h3>
-          </div>
-          <span className="text-xs text-slate-500">Query Logs + Correlated Subquery for Top Paper</span>
-        </div>
+      {/* View Content Table */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        {loading && !data ? (
+          <div className="text-center py-10 text-xs text-gray-500">Loading view data...</div>
+        ) : (
+          <div className="overflow-x-auto">
+            {activeSubTab === 'papers' && (
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 font-semibold">
+                  <tr>
+                    <th className="p-3">ID</th>
+                    <th className="p-3">Paper Title</th>
+                    <th className="p-3">Department</th>
+                    <th className="p-3 text-center">Total Retrievals</th>
+                    <th className="p-3 text-center">Unique Users</th>
+                    <th className="p-3 text-right">Avg Match</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-gray-700">
+                  {data?.paperAnalytics.map((p) => (
+                    <tr key={p.paper_id} className="hover:bg-gray-50">
+                      <td className="p-3 font-mono text-gray-400">#{p.paper_id}</td>
+                      <td className="p-3 font-medium text-gray-900 max-w-sm truncate">{p.title}</td>
+                      <td className="p-3 text-gray-600">{p.category}</td>
+                      <td className="p-3 text-center font-bold text-blue-600">{p.total_retrievals}</td>
+                      <td className="p-3 text-center">{p.unique_researchers_reached}</td>
+                      <td className="p-3 text-right font-mono font-medium">
+                        {(Number(p.avg_similarity_score) * 100).toFixed(1)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
-            <thead className="bg-slate-50 text-slate-700 font-semibold border-b">
-              <tr>
-                <th className="p-3">Query ID</th>
-                <th className="p-3">Query Text</th>
-                <th className="p-3">Executed By</th>
-                <th className="p-3">Role</th>
-                <th className="p-3 text-center">Matches</th>
-                <th className="p-3">Top Matched Paper</th>
-                <th className="p-3 text-right">Timestamp</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {data?.recentSearches.map((s) => (
-                <tr key={s.query_id} className="hover:bg-slate-50">
-                  <td className="p-3 font-mono text-slate-400">#{s.query_id}</td>
-                  <td className="p-3 font-semibold text-slate-800 italic">"{s.query_text}"</td>
-                  <td className="p-3 font-medium text-slate-900">{s.user_name}</td>
-                  <td className="p-3">
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        s.user_role === 'ADMIN'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-emerald-100 text-emerald-800'
-                      }`}
-                    >
-                      {s.user_role}
-                    </span>
-                  </td>
-                  <td className="p-3 text-center font-bold text-blue-600">{s.papers_matched}</td>
-                  <td className="p-3 max-w-xs truncate font-medium text-slate-700">
-                    {s.top_matched_paper || 'None'}
-                  </td>
-                  <td className="p-3 text-right text-slate-400 font-mono">
-                    {new Date(s.query_time).toLocaleTimeString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            {activeSubTab === 'queries' && (
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 font-semibold">
+                  <tr>
+                    <th className="p-3">ID</th>
+                    <th className="p-3">Query Text</th>
+                    <th className="p-3">User</th>
+                    <th className="p-3">Role</th>
+                    <th className="p-3 text-center">Matches</th>
+                    <th className="p-3">Top Matched Paper</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-gray-700">
+                  {data?.recentSearches.map((s) => (
+                    <tr key={s.query_id} className="hover:bg-gray-50">
+                      <td className="p-3 font-mono text-gray-400">#{s.query_id}</td>
+                      <td className="p-3 font-medium text-gray-900 italic">"{s.query_text}"</td>
+                      <td className="p-3">{s.user_name}</td>
+                      <td className="p-3">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-700">
+                          {s.user_role}
+                        </span>
+                      </td>
+                      <td className="p-3 text-center font-bold text-blue-600">{s.papers_matched}</td>
+                      <td className="p-3 max-w-xs truncate text-gray-600">{s.top_matched_paper || 'None'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
-      {/* Row: Category Insights + Audit Logs */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* View 3: view_category_insights */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-          <div className="flex items-center gap-2 border-b pb-3">
-            <FileText className="h-4 w-4 text-purple-600" />
-            <h3 className="font-bold text-slate-900 text-sm">
-              Category Distribution (View: <code>view_category_insights</code>)
-            </h3>
-          </div>
-          <div className="space-y-3">
-            {data?.categoryInsights.map((cat, idx) => (
-              <div key={idx} className="flex items-center justify-between text-xs p-2 rounded-lg bg-slate-50">
-                <span className="font-semibold text-slate-800">{cat.category}</span>
-                <div className="flex items-center gap-4 text-slate-600">
-                  <span>{cat.total_papers} papers</span>
-                  <span className="font-bold text-blue-600">{cat.total_retrievals} retrievals</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+            {activeSubTab === 'departments' && (
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 font-semibold">
+                  <tr>
+                    <th className="p-3">Department / Category</th>
+                    <th className="p-3 text-center">Total Papers</th>
+                    <th className="p-3 text-center">Total Retrieval Events</th>
+                    <th className="p-3 text-right">Avg Category Relevance</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-gray-700">
+                  {data?.categoryInsights.map((c, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50">
+                      <td className="p-3 font-medium text-gray-900">{c.category}</td>
+                      <td className="p-3 text-center font-semibold text-gray-700">{c.total_papers}</td>
+                      <td className="p-3 text-center font-bold text-blue-600">{c.total_retrievals}</td>
+                      <td className="p-3 text-right font-mono font-medium">
+                        {(Number(c.category_avg_relevance) * 100).toFixed(1)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
-        {/* Audit Log Table (Trigger verification) */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-          <div className="flex items-center gap-2 border-b pb-3">
-            <ShieldAlert className="h-4 w-4 text-amber-600" />
-            <h3 className="font-bold text-slate-900 text-sm">
-              Database Trigger Audit Trail (Table: <code>paper_audit_log</code>)
-            </h3>
-          </div>
-
-          {data?.auditLogs && data.auditLogs.length > 0 ? (
-            <div className="space-y-2">
-              {data.auditLogs.map((log) => (
-                <div key={log.audit_id} className="p-3 rounded-lg bg-slate-50 text-xs border border-slate-100">
-                  <div className="flex items-center justify-between mb-1">
-                    <span
-                      className={`font-bold px-1.5 py-0.5 rounded text-[10px] ${
-                        log.action_type === 'DELETE'
-                          ? 'bg-rose-100 text-rose-800'
-                          : 'bg-amber-100 text-amber-800'
-                      }`}
-                    >
-                      {log.action_type}
-                    </span>
-                    <span className="text-slate-400 font-mono text-[10px]">
-                      {new Date(log.changed_at).toLocaleTimeString()}
-                    </span>
-                  </div>
-                  <p className="text-slate-700">
-                    Paper #{log.paper_id}: <span className="line-through text-slate-400">{log.old_title}</span>{' '}
-                    {log.new_title && <strong className="text-emerald-700">→ {log.new_title}</strong>}
+            {activeSubTab === 'audit' && (
+              <div className="p-4 space-y-2">
+                {data?.auditLogs && data.auditLogs.length > 0 ? (
+                  data.auditLogs.map((log) => (
+                    <div key={log.audit_id} className="p-3 bg-gray-50 rounded-lg text-xs border border-gray-200">
+                      <div className="flex items-center justify-between mb-1">
+                        <span
+                          className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                            log.action_type === 'DELETE'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-amber-100 text-amber-800'
+                          }`}
+                        >
+                          {log.action_type}
+                        </span>
+                        <span className="text-gray-400 font-mono text-[10px]">
+                          {new Date(log.changed_at).toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <p className="text-gray-700">
+                        Paper #{log.paper_id}: <span className="line-through text-gray-400">{log.old_title}</span>{' '}
+                        {log.new_title && <span className="font-semibold text-gray-900">→ {log.new_title}</span>}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-gray-500 py-6 text-center">
+                    No trigger events yet. Update or delete a paper to see the database trigger write to this audit table.
                   </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-xs text-slate-500 py-4 text-center">
-              No paper modifications yet. Delete or update a paper to see this trigger fire live.
-            </p>
-          )}
-        </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

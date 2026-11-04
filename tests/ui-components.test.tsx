@@ -41,9 +41,9 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
 
     // Verify Navigation Links
     assert.ok(getByText('Search'), 'Search tab link must exist');
-    assert.ok(getByText('Repository'), 'Repository tab link must exist');
-    assert.ok(getByText('Analytics & Views'), 'Analytics tab link must exist');
-    assert.ok(getByText('SQL Showcase'), 'SQL Showcase tab link must exist');
+    assert.ok(getByText('Papers'), 'Papers tab link must exist');
+    assert.ok(getByText('Analytics'), 'Analytics tab link must exist');
+    assert.ok(getByText('SQL Demo'), 'SQL Demo tab link must exist');
 
     // Verify Role Toggle displays Student
     const roleButton = getByText('Student');
@@ -64,10 +64,10 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
     );
     assert.ok(getByText('Admin'), 'Role button must now display Admin');
 
-    // Click Repository Tab
-    const repoTabButton = getByText('Repository');
-    fireEvent.click(repoTabButton);
-    assert.strictEqual(currentTab, 'papers', 'Clicking Repository must change activeTab to papers');
+    // Click Papers Tab
+    const papersTabButton = getByText('Papers');
+    fireEvent.click(papersTabButton);
+    assert.strictEqual(currentTab, 'papers', 'Clicking Papers must change activeTab to papers');
   });
 
   await t.test('SqlShowcase: Renders 3 demonstration query options and triggers selection', async () => {
@@ -90,12 +90,12 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
 
     // Verify header and query cards
     assert.ok(getByText('Advanced DBMS Query Demonstrator'), 'Header must render');
-    assert.ok(getByText('4-Table JOIN + Subquery'), 'JOIN card must render');
-    assert.ok(getByText('GROUP BY with HAVING & Aggregates'), 'GROUP BY card must render');
-    assert.ok(getByText('Full-Text Search vs Vector Distance'), 'FTS vs Vector card must render');
+    assert.ok(getByText('1. Multi-Table JOIN Query'), 'JOIN card must render');
+    assert.ok(getByText('2. GROUP BY & HAVING Query'), 'GROUP BY card must render');
+    assert.ok(getByText('3. Full-Text vs Vector Search'), 'FTS vs Vector card must render');
 
     // Click on GROUP BY with HAVING card
-    const groupByCard = getByText('GROUP BY with HAVING & Aggregates');
+    const groupByCard = getByText('2. GROUP BY & HAVING Query');
     fireEvent.click(groupByCard);
     assert.ok(groupByCard, 'Clicked GROUP BY card successfully');
   });

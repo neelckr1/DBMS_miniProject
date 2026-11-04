@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Database, Play, Clock, Code, CheckCircle } from 'lucide-react';
+import { Play } from 'lucide-react';
 
 export default function SqlShowcase() {
   const [activeQuery, setActiveQuery] = useState<'multi_join' | 'group_by_having' | 'hybrid_search'>('multi_join');
@@ -11,21 +11,21 @@ export default function SqlShowcase() {
   const queries = [
     {
       id: 'multi_join',
-      name: '4-Table JOIN + Subquery',
+      name: '1. Multi-Table JOIN Query',
       tag: 'JOIN & Subqueries',
-      desc: 'Joins users, search_query, query_retrieval, and research_paper with aggregation and correlated subquery.',
+      desc: 'Joins 4 tables (users -> search_query -> query_retrieval -> research_paper) with aggregations and subquery.',
     },
     {
       id: 'group_by_having',
-      name: 'GROUP BY with HAVING & Aggregates',
-      tag: 'Aggregations',
-      desc: 'Aggregates research papers and query retrievals by category with HAVING condition.',
+      name: '2. GROUP BY & HAVING Query',
+      tag: 'Aggregates',
+      desc: 'Aggregates papers and queries by department with a HAVING filter condition.',
     },
     {
       id: 'hybrid_search',
-      name: 'Full-Text Search vs Vector Distance',
+      name: '3. Full-Text vs Vector Search',
       tag: 'pgvector & FTS',
-      desc: 'Compares tsvector keyword ranking against 384-dimensional cosine distance (<=>).',
+      desc: 'Compares PostgreSQL tsvector keyword match ranking against 384-d vector cosine distance (<=>).',
     },
   ];
 
@@ -47,100 +47,88 @@ export default function SqlShowcase() {
   }, [activeQuery]);
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-5xl mx-auto space-y-5">
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-          <Database className="h-5 w-5 text-blue-600" />
-          Advanced DBMS Query Demonstrator
-        </h2>
-        <p className="text-sm text-slate-500 mt-1">
-          Designed for faculty evaluation: Live execution of complex JOINs, aggregate functions, subqueries, and vector comparisons on PostgreSQL.
+      <div className="bg-white p-5 rounded-xl border border-gray-200">
+        <h2 className="text-xl font-bold text-gray-900">Advanced DBMS Query Demonstrator</h2>
+        <p className="text-xs text-gray-500 mt-0.5">
+          Live execution of complex SQL operations directly against PostgreSQL for faculty evaluation.
         </p>
       </div>
 
-      {/* Query Selector Tabs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      {/* 3 Simple Query Selector Buttons */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {queries.map((q) => (
           <button
             key={q.id}
             onClick={() => setActiveQuery(q.id as any)}
-            className={`p-4 rounded-xl border text-left transition-all ${
+            className={`p-3.5 rounded-lg border text-left transition-all ${
               activeQuery === q.id
-                ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/20'
-                : 'bg-white border-slate-200 hover:border-slate-300'
+                ? 'bg-blue-50 border-blue-600 ring-1 ring-blue-600'
+                : 'bg-white border-gray-200 hover:border-gray-300'
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">
                 {q.tag}
               </span>
-              {activeQuery === q.id && <CheckCircle className="h-4 w-4 text-blue-600" />}
             </div>
-            <p className="text-sm font-bold text-slate-900 mt-2">{q.name}</p>
-            <p className="text-xs text-slate-500 mt-1 leading-snug">{q.desc}</p>
+            <p className="text-xs font-bold text-gray-900 mt-2">{q.name}</p>
+            <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{q.desc}</p>
           </button>
         ))}
       </div>
 
-      {/* Query Display & Results */}
+      {/* Query Display and Results */}
       {result && (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* SQL Code Box */}
-          <div className="bg-slate-950 text-slate-200 rounded-xl p-5 border border-slate-800 shadow-lg space-y-3">
-            <div className="flex items-center justify-between text-xs border-b border-slate-800 pb-2">
-              <span className="flex items-center gap-2 text-blue-400 font-semibold font-mono">
-                <Code className="h-4 w-4" />
-                Executed SQL Statement
+          <div className="bg-gray-950 text-gray-200 rounded-lg p-4 border border-gray-800 space-y-2">
+            <div className="flex items-center justify-between text-xs border-b border-gray-800 pb-2">
+              <span className="text-blue-400 font-semibold font-mono">Executed SQL Statement</span>
+              <span className="text-emerald-400 font-mono text-[11px]">
+                ⚡ {result.executionTimeMs} ms ({result.rowCount} rows)
               </span>
-              <div className="flex items-center gap-3 text-slate-400 font-mono">
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-emerald-400" />
-                  {result.executionTimeMs} ms
-                </span>
-                <span>{result.rowCount} rows</span>
-              </div>
             </div>
-
-            <pre className="font-mono text-xs overflow-x-auto text-emerald-400 leading-relaxed py-2">
+            <pre className="font-mono text-xs overflow-x-auto text-emerald-400 leading-relaxed py-1">
               {result.sql}
             </pre>
           </div>
 
           {/* Results Table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-              <h4 className="text-sm font-bold text-slate-900">Query Result Set</h4>
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+            <div className="p-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between text-xs">
+              <span className="font-bold text-gray-700">Query Result Set</span>
               <button
                 onClick={() => runQuery(activeQuery)}
-                className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold"
+                className="flex items-center gap-1 text-[11px] text-blue-600 hover:text-blue-800 font-semibold"
               >
-                <Play className="h-3 w-3" />
-                Re-execute
+                <Play className="w-3 h-3" />
+                <span>Re-run Query</span>
               </button>
             </div>
 
             {loading ? (
-              <div className="text-center py-12 text-slate-400">Executing SQL on PostgreSQL...</div>
+              <div className="text-center py-8 text-xs text-gray-400">Executing SQL on PostgreSQL...</div>
             ) : (
-              <div className="overflow-x-auto max-h-96">
+              <div className="overflow-x-auto max-h-80">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-700 font-semibold border-b sticky top-0">
+                  <thead className="bg-gray-50 text-gray-700 font-semibold border-b sticky top-0">
                     <tr>
                       {result.rows && result.rows.length > 0 &&
                         Object.keys(result.rows[0]).map((key) => (
-                          <th key={key} className="p-3 whitespace-nowrap">
+                          <th key={key} className="p-2.5 whitespace-nowrap">
                             {key}
                           </th>
                         ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-mono">
+                  <tbody className="divide-y divide-gray-100 font-mono text-gray-800">
                     {result.rows.map((row: any, idx: number) => (
-                      <tr key={idx} className="hover:bg-slate-50">
+                      <tr key={idx} className="hover:bg-gray-50">
                         {Object.values(row).map((val: any, valIdx: number) => (
-                          <td key={valIdx} className="p-3 text-slate-700 whitespace-nowrap max-w-xs truncate">
-                            {val === null ? <span className="text-slate-300">NULL</span> : String(val)}
+                          <td key={valIdx} className="p-2.5 whitespace-nowrap max-w-xs truncate">
+                            {val === null ? <span className="text-gray-300">NULL</span> : String(val)}
                           </td>
                         ))}
                       </tr>
