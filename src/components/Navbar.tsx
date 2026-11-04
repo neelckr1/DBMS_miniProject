@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Search, BookOpen, BarChart3, Terminal, Shield, GraduationCap } from 'lucide-react';
+import { Search, BookOpen, BarChart3, Shield, GraduationCap } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
@@ -15,7 +15,6 @@ export default function Navbar({ activeTab, setActiveTab, userRole, setUserRole 
     { id: 'search', label: 'Search', icon: Search },
     { id: 'papers', label: 'Papers', icon: BookOpen },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'sql', label: 'SQL Demo', icon: Terminal },
   ];
 
   return (

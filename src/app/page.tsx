@@ -5,10 +5,9 @@ import Navbar from '@/components/Navbar';
 import SearchSection from '@/components/SearchSection';
 import PaperRepository from '@/components/PaperRepository';
 import AnalyticsDashboard from '@/components/AnalyticsDashboard';
-import SqlShowcase from '@/components/SqlShowcase';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'search' | 'papers' | 'analytics' | 'sql'>('search');
+  const [activeTab, setActiveTab] = useState<'search' | 'papers' | 'analytics'>('search');
   const [userRole, setUserRole] = useState<'ADMIN' | 'STUDENT'>('STUDENT');
 
   return (
@@ -24,7 +23,6 @@ export default function Home() {
         {activeTab === 'search' && <SearchSection userRole={userRole} />}
         {activeTab === 'papers' && <PaperRepository userRole={userRole} />}
         {activeTab === 'analytics' && <AnalyticsDashboard />}
-        {activeTab === 'sql' && <SqlShowcase />}
       </main>
 
       {/* Simple Minimal Footer */}
