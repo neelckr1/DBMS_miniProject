@@ -51,6 +51,7 @@ test('Advanced DBMS Features Tests (Procedures, Views, Triggers, Transactions)',
       RETURNING paper_id;
     `);
     const tempPaperId = insertRes.rows[0].paper_id;
+    await query(`DELETE FROM paper_audit_log WHERE paper_id = $1`, [tempPaperId]);
 
     // 2. Update paper title -> triggers UPDATE audit
     await query(`
@@ -75,6 +76,9 @@ test('Advanced DBMS Features Tests (Procedures, Views, Triggers, Transactions)',
       WHERE paper_id = $1 AND action_type = 'DELETE';
     `, [tempPaperId]);
     assert.strictEqual(deleteAudit.rowCount, 1, 'DELETE action must be recorded in paper_audit_log');
+
+    // Clean up audit log for temp test paper
+    await query(`DELETE FROM paper_audit_log WHERE paper_id = $1`, [tempPaperId]);
   });
 
   await t.test('Views: view_paper_analytics, view_recent_search_activity, view_category_insights execute and return aggregated metrics', async () => {
