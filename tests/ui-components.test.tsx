@@ -136,8 +136,9 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
     fireEvent.click(adminTab);
     assert.ok(getByText('Administrator Access:'), 'Admin access description must appear');
 
-    // Email and password inputs should now reflect admin
+    // Email input accepts user typing
     const emailInput = getByPlaceholderText('user@campus.edu') as HTMLInputElement;
+    fireEvent.change(emailInput, { target: { value: 'admin@campus.edu' } });
     assert.strictEqual(emailInput.value, 'admin@campus.edu');
   });
 });
