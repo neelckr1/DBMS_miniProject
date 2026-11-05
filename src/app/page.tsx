@@ -10,10 +10,9 @@ import { ShieldAlert } from 'lucide-react';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
-  const [isInitializing, setIsInitializing] = useState(true);
   const [activeTab, setActiveTab] = useState<'search' | 'papers' | 'analytics'>('search');
 
-  // Restore session from localStorage if present
+  // Restore session from localStorage on mount if present
   useEffect(() => {
     try {
       const saved = localStorage.getItem('campus_research_user');
@@ -22,8 +21,6 @@ export default function Home() {
       }
     } catch (e) {
       console.error('Failed to restore session:', e);
-    } finally {
-      setIsInitializing(false);
     }
   }, []);
 
@@ -46,14 +43,6 @@ export default function Home() {
     }
     setActiveTab('search');
   };
-
-  if (isInitializing) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   // Mandatory Authentication Gate: Render LoginPage if not authenticated
   if (!currentUser) {
