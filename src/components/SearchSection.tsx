@@ -14,7 +14,13 @@ interface SearchResult {
   rank_order: number;
 }
 
-export default function SearchSection({ userRole }: { userRole: 'ADMIN' | 'STUDENT' }) {
+export default function SearchSection({
+  userRole,
+  userId,
+}: {
+  userRole: 'ADMIN' | 'STUDENT';
+  userId?: number;
+}) {
   const [queryText, setQueryText] = useState('');
   const [threshold, setThreshold] = useState(0.15);
   const [limit, setLimit] = useState(5);
@@ -43,7 +49,7 @@ export default function SearchSection({ userRole }: { userRole: 'ADMIN' | 'STUDE
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           queryText: text.trim(),
-          userId: userRole === 'ADMIN' ? 1 : 2,
+          userId: userId || (userRole === 'ADMIN' ? 1 : 2),
           limit,
           threshold,
         }),
