@@ -16,13 +16,7 @@ interface Paper {
   has_vector: boolean;
 }
 
-export default function PaperRepository({
-  userRole,
-  userId,
-}: {
-  userRole: 'ADMIN' | 'STUDENT';
-  userId?: number;
-}) {
+export default function PaperRepository({ userRole }: { userRole: 'ADMIN' | 'STUDENT' }) {
   const [papers, setPapers] = useState<Paper[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -77,7 +71,7 @@ export default function PaperRepository({
           authors,
           category,
           publicationDate,
-          userId: userId || (userRole === 'ADMIN' ? 1 : 2),
+          userId: userRole === 'ADMIN' ? 1 : 2,
         }),
       });
 

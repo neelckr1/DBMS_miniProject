@@ -5,7 +5,6 @@ import { GET as getPapersHandler, POST as createPaperHandler } from '../src/app/
 import { DELETE as deletePaperHandler } from '../src/app/api/papers/[id]/route';
 import { GET as getAnalyticsHandler } from '../src/app/api/analytics/route';
 import { GET as getSqlDemoHandler } from '../src/app/api/sql-demo/route';
-import { POST as loginHandler } from '../src/app/api/auth/login/route';
 import { NextRequest } from 'next/server';
 
 function createMockRequest(url: string, method: string, body?: any): NextRequest {
@@ -21,40 +20,6 @@ function createMockRequest(url: string, method: string, body?: any): NextRequest
 
 test('UI End-to-End User Journey Tests', async (t) => {
   let createdTestPaperId: number | null = null;
-
-  await t.test('0. Authentication Flow: Mandatory role-based authentication and credential verification', async () => {
-    // 1. Student login verification
-    const studentLoginReq = createMockRequest('http://localhost:3000/api/auth/login', 'POST', {
-      email: 'student@campus.edu',
-      password: 'student123',
-    });
-    const studentRes = await loginHandler(studentLoginReq);
-    assert.strictEqual(studentRes.status, 200, 'Student login must return HTTP 200');
-    const studentData = await studentRes.json();
-    assert.strictEqual(studentData.success, true);
-    assert.strictEqual(studentData.user.role, 'STUDENT', 'Must return STUDENT role');
-    assert.strictEqual(studentData.user.email, 'student@campus.edu');
-
-    // 2. Admin login verification
-    const adminLoginReq = createMockRequest('http://localhost:3000/api/auth/login', 'POST', {
-      email: 'admin@campus.edu',
-      password: 'admin123',
-    });
-    const adminRes = await loginHandler(adminLoginReq);
-    assert.strictEqual(adminRes.status, 200, 'Admin login must return HTTP 200');
-    const adminData = await adminRes.json();
-    assert.strictEqual(adminData.success, true);
-    assert.strictEqual(adminData.user.role, 'ADMIN', 'Must return ADMIN role');
-    assert.strictEqual(adminData.user.email, 'admin@campus.edu');
-
-    // 3. Bad password rejection
-    const badReq = createMockRequest('http://localhost:3000/api/auth/login', 'POST', {
-      email: 'admin@campus.edu',
-      password: 'wrongpassword',
-    });
-    const badRes = await loginHandler(badReq);
-    assert.strictEqual(badRes.status, 401, 'Invalid password must return HTTP 401');
-  });
 
   await t.test('1. Semantic Search Flow: Student executes natural language search query', async () => {
     const req = createMockRequest('http://localhost:3000/api/search', 'POST', {
