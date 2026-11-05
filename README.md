@@ -46,6 +46,7 @@ Diagrams and specifications:
 - [Relational Schema](docs/diagrams/relational_schema.jpeg)
 - [Data Dictionary & Constraints](docs/DATA_DICTIONARY.md)
 - [System Architecture](docs/ARCHITECTURE.md)
+- [Work Distribution & Commit Analysis](docs/WORK_DISTRIBUTION.md)
 
 ---
 
@@ -169,3 +170,5 @@ npm test
 | :--- | :--- | :--- |
 | **Neel Chandrakar** | [@neelckr1](https://github.com/neelckr1) | PL/pgSQL stored procedures, audit triggers, pgvector connection pool, Next.js API route handlers, analytics views & architecture documentation. |
 | **Nikhil Raj** | [@nikhilraj-git6](https://github.com/nikhilraj-git6) | Relational DDL schema design, table constraints, HNSW vector indexing, UI components, paper repository interface, automated test suite & data dictionary. |
+
+> Detailed commit-by-commit analysis, workload distribution, and technical split are documented in **[docs/WORK_DISTRIBUTION.md](docs/WORK_DISTRIBUTION.md)**.
