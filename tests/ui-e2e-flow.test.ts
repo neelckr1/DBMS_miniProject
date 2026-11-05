@@ -26,7 +26,7 @@ test('UI End-to-End User Journey Tests', async (t) => {
     // 1. Student login verification
     const studentLoginReq = createMockRequest('http://localhost:3000/api/auth/login', 'POST', {
       email: 'student@campus.edu',
-      password: 'student123',
+      password: '123',
     });
     const studentRes = await loginHandler(studentLoginReq);
     assert.strictEqual(studentRes.status, 200, 'Student login must return HTTP 200');
@@ -38,7 +38,7 @@ test('UI End-to-End User Journey Tests', async (t) => {
     // 2. Admin login verification
     const adminLoginReq = createMockRequest('http://localhost:3000/api/auth/login', 'POST', {
       email: 'admin@campus.edu',
-      password: 'admin123',
+      password: '123',
     });
     const adminRes = await loginHandler(adminLoginReq);
     assert.strictEqual(adminRes.status, 200, 'Admin login must return HTTP 200');

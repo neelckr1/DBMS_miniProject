@@ -5,9 +5,9 @@
 
 -- 1. Seed Users (Roles: ADMIN, STUDENT)
 INSERT INTO users (user_id, email, password_hash, full_name, role) VALUES
-(1, 'admin@campus.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Dr. Neel Chandrakar (Admin / Faculty)', 'ADMIN'),
-(2, 'student@campus.edu', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Aarav Sharma (Student)', 'STUDENT')
-ON CONFLICT (email) DO UPDATE SET role = EXCLUDED.role, full_name = EXCLUDED.full_name;
+(1, 'admin@campus.edu', '$2a$10$QwtF1RBWNssZVmjbZ69Zx.W8AliJTkPAi6dLJmSnfpRWTWLL.6cXa', 'Dr. Neel Chandrakar (Admin / Faculty)', 'ADMIN'),
+(2, 'student@campus.edu', '$2a$10$QwtF1RBWNssZVmjbZ69Zx.W8AliJTkPAi6dLJmSnfpRWTWLL.6cXa', 'Aarav Sharma (Student)', 'STUDENT')
+ON CONFLICT (email) DO UPDATE SET role = EXCLUDED.role, full_name = EXCLUDED.full_name, password_hash = EXCLUDED.password_hash;
 ALTER SEQUENCE users_user_id_seq RESTART WITH 3;
 
 -- 2. Seed Research Papers and Vector Embeddings (384 dimensions)
