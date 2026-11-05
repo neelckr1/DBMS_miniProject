@@ -21,6 +21,7 @@ import { render, fireEvent, cleanup } from '@testing-library/react';
 import Navbar from '../src/components/Navbar';
 import SearchSection from '../src/components/SearchSection';
 import PaperRepository from '../src/components/PaperRepository';
+import LoginPage from '../src/components/LoginPage';
 
 test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
   await t.test('Navbar: Renders branding, navigation tabs, and role toggle', () => {
@@ -113,5 +114,30 @@ test('UI Component Tests (DOM Rendering & Interactivity)', async (t) => {
     // Rerender as ADMIN
     rerender(React.createElement(PaperRepository, { userRole: 'ADMIN' }));
     assert.ok(getByText('Upload Paper'), 'Admin mode MUST have active Upload Paper button');
+  });
+
+  await t.test('LoginPage: Renders institutional login portal and switches role tabs', () => {
+    cleanup();
+    let loggedInUser: any = null;
+
+    const { getByText, getByPlaceholderText } = render(
+      React.createElement(LoginPage, {
+        onLoginSuccess: (user: any) => { loggedInUser = user; },
+      })
+    );
+
+    // Verify Title & Portal Tabs
+    assert.ok(getByText('Institutional Sign In'), 'Login title must render');
+    assert.ok(getByText('Student Portal'), 'Student Portal tab must exist');
+    assert.ok(getByText('Admin / Faculty'), 'Admin / Faculty tab must exist');
+
+    // Click Admin Portal tab
+    const adminTab = getByText('Admin / Faculty');
+    fireEvent.click(adminTab);
+    assert.ok(getByText('Administrator Access:'), 'Admin access description must appear');
+
+    // Email and password inputs should now reflect admin
+    const emailInput = getByPlaceholderText('user@campus.edu') as HTMLInputElement;
+    assert.strictEqual(emailInput.value, 'admin@campus.edu');
   });
 });

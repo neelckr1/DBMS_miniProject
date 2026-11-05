@@ -1,38 +1,74 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import SearchSection from '@/components/SearchSection';
 import PaperRepository from '@/components/PaperRepository';
 import AnalyticsDashboard from '@/components/AnalyticsDashboard';
+import LoginPage, { AuthUser } from '@/components/LoginPage';
 import { ShieldAlert } from 'lucide-react';
 
 export default function Home() {
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [activeTab, setActiveTab] = useState<'search' | 'papers' | 'analytics'>('search');
-  const [userRole, setUserRole] = useState<'ADMIN' | 'STUDENT'>('STUDENT');
 
-  const handleRoleChange = (role: 'ADMIN' | 'STUDENT') => {
-    setUserRole(role);
-    if (role === 'STUDENT' && activeTab === 'analytics') {
-      setActiveTab('search');
+  // Check for saved session on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('campus_research_user');
+      if (saved) {
+        setCurrentUser(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error('Session restore error:', e);
     }
+  }, []);
+
+  const handleLoginSuccess = (user: AuthUser) => {
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('campus_research_user', JSON.stringify(user));
+    } catch (e) {
+      console.error(e);
+    }
+    setActiveTab('search');
   };
 
+  const handleLogout = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('campus_research_user');
+    } catch (e) {
+      console.error(e);
+    }
+    setActiveTab('search');
+  };
+
+  // Mandatory Authentication Gate
+  if (!currentUser) {
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
       <Navbar
         activeTab={activeTab}
         setActiveTab={(tab: any) => setActiveTab(tab)}
-        userRole={userRole}
-        setUserRole={handleRoleChange}
+        user={currentUser}
+        userRole={currentUser.role}
+        onLogout={handleLogout}
       />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
-        {activeTab === 'search' && <SearchSection userRole={userRole} />}
-        {activeTab === 'papers' && <PaperRepository userRole={userRole} />}
+        {activeTab === 'search' && (
+          <SearchSection userRole={currentUser.role} userId={currentUser.user_id} />
+        )}
+        {activeTab === 'papers' && (
+          <PaperRepository userRole={currentUser.role} userId={currentUser.user_id} />
+        )}
         {activeTab === 'analytics' &&
-          (userRole === 'ADMIN' ? (
-            <AnalyticsDashboard userRole={userRole} />
+          (currentUser.role === 'ADMIN' ? (
+            <AnalyticsDashboard userRole={currentUser.role} />
           ) : (
             <div className="max-w-md mx-auto my-12 bg-white p-8 rounded-2xl border border-rose-200 text-center space-y-4 shadow-sm">
               <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
@@ -42,31 +78,25 @@ export default function Home() {
               <p className="text-xs text-slate-600 leading-relaxed">
                 Institutional analytics, search telemetry, and database audit logs are restricted to campus administrators.
               </p>
-              <button
-                onClick={() => handleRoleChange('ADMIN')}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-all shadow-sm"
-              >
-                Switch to Admin Role
-              </button>
             </div>
           ))}
       </main>
 
       {/* Simple Minimal Footer */}
-      <footer className="bg-white border-t border-gray-200 py-5 text-xs text-gray-500">
+      <footer className="bg-white border-t border-slate-200 py-5 text-xs text-slate-500">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p>Campus Research Repository & Semantic Search System — Level 3 DBMS Mini-Project</p>
           <div className="flex items-center gap-3">
-            <span>Role: <strong className="text-gray-700">{userRole}</strong></span>
+            <span>
+              Signed in as: <strong className="text-slate-800 font-semibold">{currentUser.full_name}</strong> ({currentUser.role})
+            </span>
             <span>•</span>
-            <a
-              href="https://github.com/neelckr1/DBMS_miniProject"
-              target="_blank"
-              rel="noreferrer"
-              className="text-gray-600 hover:text-blue-600 font-medium"
+            <button
+              onClick={handleLogout}
+              className="text-rose-600 hover:underline font-semibold"
             >
-              GitHub Repository
-            </a>
+              Sign Out
+            </button>
           </div>
         </div>
       </footer>
