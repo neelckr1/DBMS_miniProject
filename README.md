@@ -44,6 +44,7 @@ Traditional academic search systems rely almost exclusively on keyword matching 
 Diagrams and specifications:
 - [ER Diagram](docs/diagrams/er_diagram.jpeg)
 - [Relational Schema](docs/diagrams/relational_schema.jpeg)
+- [Database Technical Guide & Table Reference](docs/DATABASE_EXPLANATION.md)
 - [Data Dictionary & Constraints](docs/DATA_DICTIONARY.md)
 - [System Architecture](docs/ARCHITECTURE.md)
 - [Work Distribution & Commit Analysis](docs/WORK_DISTRIBUTION.md)
